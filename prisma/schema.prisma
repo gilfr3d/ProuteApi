@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id             Int          @id(map: "pk_users_id") @default(autoincrement())
+  name           String       @db.NVarChar(Max)
+  email          String       @unique
+  password       String       @db.NVarChar(Max)
+  image          String?      @db.NVarChar(Max)
+  mobile         String       @db.NVarChar(Max)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  permissions    Permission[] @relation("UserToPermission")
+  admins         Admins[]      @relation("AdminToUser")
+  refreshTokens  RefreshToken[]
+  role           String?       @default("User") // Default role for regular users
+}
+
+model RefreshToken {
+  id          Int      @id @default(autoincrement())
+  token       String   @db.NVarChar(Max)
+  userId      Int      @map("users_id")
+  user        Users    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Permission {
+  id          Int      @id(map: "pk_permissions_id") @default(autoincrement())
+  name        String   @db.NVarChar(Max)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  users  Users[] @relation("UserToPermission")
+  admins Admins[] @relation("AdminToPermission")
+}
+
+model Admins {
+  id             Int          @id(map: "pk_admins_id") @default(autoincrement())
+  name           String       @db.NVarChar(Max)
+  email          String       @unique
+  password       String       @db.NVarChar(Max)
+  mobile         String?      @db.NVarChar(Max)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  users          Users[]      @relation("AdminToUser")
+  permissions    Permission[] @relation("AdminToPermission")
+}
+
+model Routes {
+  id             Int          @id(map: "pk_routes_id") @default(autoincrement())
+  name           String       @db.NVarChar(Max)
+  waypoints      String       @db.NVarChar(Max)
+  distance       Float?      
+  distanceUnit   String?  
+  routeSchedule  DateTime
+  time           Int?         
+  createdAt      DateTime     @default(now()) @db.DateTime2
+  updatedAt      DateTime     @updatedAt @db.DateTime2
+}

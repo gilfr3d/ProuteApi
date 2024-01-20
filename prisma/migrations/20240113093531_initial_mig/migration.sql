@@ -1,0 +1,20 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[Users] DROP CONSTRAINT [Users_role_df];
+ALTER TABLE [dbo].[Users] ADD CONSTRAINT [Users_role_df] DEFAULT 'User' FOR [role];
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH
