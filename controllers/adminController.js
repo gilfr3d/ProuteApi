@@ -19,6 +19,33 @@ const getAllUsers = async (req, res) => {
     }
   };
 
+  export const getUserById = async (req, res) => {
+    const userId = parseInt(req.params.userId); 
+  
+    try {
+      const user = await prisma.users.findUnique({
+        where: {
+          id: userId,
+        },
+        // include: {
+        //   permissions: true,
+        //   admins: true,
+        // },
+      });
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json(user);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+      await prisma.$disconnect();
+    }
+  };
+
 const getAllPermissions = async (req, res) => {
     try {
       const allPermissions = await prisma.permission.findMany();

@@ -66,7 +66,7 @@ export const loginUser = async (req, res) => {
           newRefreshTokenArray = [];
         }
 
-        // res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true }); for production httpOnly: true
+        // res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true }); // for production httpOnly: true
         res.clearCookie('jwt', { sameSite: 'None', secure: true }); // for dev only
       }
 
@@ -140,6 +140,33 @@ export const refresh = async (req, res) => {
     res.status(403).json({ message: 'Forbidden' });
   }
 };
+
+export const getUser = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const user = await prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not registered" });
+    }
+
+    // Omit sensitive information before sending the response
+    const { password, refreshTokens, ...userInfo } = user;
+
+    res.json(userInfo);
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 
 export const invalidatedTokens = [];
 
