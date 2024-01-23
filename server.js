@@ -9,7 +9,7 @@ import cors from 'cors'
 import { corsOptions } from './config/corsOptions.js';
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; //change it to your port Mr Gil
 const app = express();
 
 app.use((req, res, next) => {

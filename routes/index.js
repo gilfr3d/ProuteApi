@@ -15,7 +15,7 @@ router.get('/refresh', refresh);
 router.post('/logout', logoutUser);
 
 // admin route
-router.use(verifyJWT)
+//router.use(verifyJWT)
 router.get('/users', getAllUsers);
 router.get('/permissions', getAllPermissions);
 // plan route routes
