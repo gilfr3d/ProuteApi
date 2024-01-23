@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { loginUser, logoutUser, refresh } from "../controllers/authController.js";
+import { getUser, loginUser, logoutUser, refresh } from "../controllers/authController.js";
 import { registerUser } from "../controllers/registerController.js";
 import loginLimiter from '../middlewares/loginLimiter.js'
-import { getAllPermissions, getAllUsers } from "../controllers/adminController.js";
+import { getAllPermissions, getAllUsers, getUserById } from "../controllers/adminController.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { createRoutes, deleteRoute, getPlanRoutes, updateRoute } from "../controllers/routesController.js";
 
@@ -17,6 +17,8 @@ router.post('/logout', logoutUser);
 // admin route
 router.use(verifyJWT)
 router.get('/users', getAllUsers);
+router.get('/users/:userId', getUserById);
+router.get('/user', getUser);
 router.get('/permissions', getAllPermissions);
 // plan route routes
 router.post('/create-route', createRoutes)

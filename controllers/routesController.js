@@ -1,38 +1,47 @@
 import prisma from '../config/db.js';
+import { getDistanceMatrix } from '../utils/getDistanceMatrix.js';
+import { getCurrentLocation } from '../utils/getCurrentLocation.js';
 
 export const createRoutes = async (req, res) => {
-    const { name, waypoints, distance, distanceUnit, routeSchedule, time } = req.body;
+  const { name, waypoints, distanceUnit, routeSchedule, time } = req.body;
+  const apiKey = process.env.GOOGLE_MAP_API_KEY; 
+
+  try {
+    const currentLocation = await getCurrentLocation();
+    const origin = `${currentLocation.lat},${currentLocation.lng}`;
+    const destination = waypoints.split(',').map((point) => point.trim()).pop();
   
-    try {
-      const newRoute = await prisma.routes.create({
-        data: {
-          name,
-          waypoints: JSON.stringify(waypoints.split(',').map(point => point.trim())),
-          distance,
-          distanceUnit,
-          routeSchedule: new Date(routeSchedule), // Convert to Date object
-          time,
-        },
-      });
+    const distanceMatrix = await getDistanceMatrix(origin, destination, apiKey);
+    const distance = distanceMatrix.rows[0].elements[0].distance.text;
   
-      return res.json({
-        status: 'success',
-        data: {
-          message: 'Route created',
-          route: newRoute,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        status: 'error',
-        error: 'Internal Server Error',
-      });
-    } finally {
-      await prisma.$disconnect();
-    }
-  };
+    const newRoute = await prisma.routes.create({
+      data: {
+        name,
+        waypoints: JSON.stringify(waypoints.split(',').map((point) => point.trim())),
+        distance,
+        distanceUnit,
+        routeSchedule: new Date(routeSchedule),
+        time,
+      },
+    });
   
+    return res.json({
+      status: 'success',
+      data: {
+        message: 'Route created',
+        route: newRoute,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: 'error',
+      error: 'Internal Server Error',
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
 
 export const getPlanRoutes = async (req, res) => {
   try {

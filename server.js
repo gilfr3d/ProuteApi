@@ -7,6 +7,7 @@ import { logger } from './middlewares/logger.js';
 import errorHandler from './middlewares/errorHandler.js';
 import cors from 'cors'
 import { corsOptions } from './config/corsOptions.js';
+import { fileURLToPath } from 'url';
 
 
 const PORT = process.env.PORT || 3000;
@@ -16,11 +17,11 @@ app.use((req, res, next) => {
   logger(req, res, next, __dirname);
 });
 app.use(cors(corsOptions))
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.resolve()
-// const __dirname = path.dirname(__filename);
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename);
+
+app.use('/', express.static(path.join(__dirname, "public")));
 
 //* Middleware
 app.use(express.json());
