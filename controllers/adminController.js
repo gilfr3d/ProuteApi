@@ -2,7 +2,6 @@ import prisma from '../config/db.js';
 
 const getAllUsers = async (req, res) => {
     try {
-      // const allUsers = await prisma.users.findMany()
       const allUsers = await prisma.users.findMany({
         include: {
           permissions: true,

@@ -1,6 +1,6 @@
 export const getCurrentLocation = async () => {
     return new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
+        if (typeof navigator !== 'undefined' &&  navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
               const currentLocation = {

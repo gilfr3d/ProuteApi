@@ -6,10 +6,8 @@ export const createRoutes = async (req, res) => {
   const { name, waypoints, distanceUnit, routeSchedule, time } = req.body;
 
   if (!name || !waypoints || !distanceUnit || !routeSchedule || !time) {
-    return res.status(400).json({ error: 'Bad Request - Missing required fields' });
+    return res.status(400).json({ error: 'Fields Required' });
   }
-  
-  const apiKey = process.env.GOOGLE_MAP_API_KEY; 
 
   try {
     const currentLocation = await getCurrentLocation();
@@ -134,3 +132,5 @@ export const deleteRoute = async (req, res) => {
     await prisma.$disconnect();
   }
 };
+
+
