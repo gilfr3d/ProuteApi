@@ -2,10 +2,11 @@ import { Router } from "express";
 import { getUser, loginUser, logoutUser, refresh } from "../controllers/authController.js";
 import { registerUser } from "../controllers/registerController.js";
 import loginLimiter from '../middlewares/loginLimiter.js'
-import { createProducts, getAllUsers, getUserById } from "../controllers/adminController.js";
+import { getAllUsers, getUserById } from "../controllers/adminController.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { createRoutes, deleteRoute, getPlanRoutes, updateRoute } from "../controllers/routesController.js";
 import { createTerritories, getAllTerritories, getOneTerritory } from "../controllers/territoryController.js";
+import { createProducts, getAllProducts } from "../controllers/productsController.js";
 
 const router = Router()
 // auth route
@@ -32,6 +33,7 @@ router.get('/get-territory/:territoryId', getOneTerritory)
 
 // products
 router.post('/create-products', createProducts)
+router.get('/get-all-products', getAllProducts)
 
 export default router;
 

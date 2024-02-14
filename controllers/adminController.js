@@ -40,31 +40,6 @@ const getAllUsers = async (req, res) => {
     }
   };
 
-  //insert dummy data
-  export const createProducts = async (req, res) => {
-   
-    try {
-      // Insert dummy product data into the database
-      const createdProducts = await prisma.products.createMany({
-        data: dummyProducts,
-      });
-  
-      return res.json({
-        success: true,
-        message: 'Dummy products inserted successfully.',
-        data: createdProducts,
-      });
-    } catch (error) {
-      console.error('Error inserting dummy products:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Internal Server Error',
-        error: error.message,
-      });
-    }
-  };
-
-
   export  {
     getAllUsers,
   }
