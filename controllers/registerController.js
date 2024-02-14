@@ -30,7 +30,7 @@ export const registerUser = async (req, res) => {
         mobile,
         password: hashPassword,
         image,
-        role: role || 'User'
+        role: role || 'Employee'
       },
     });
 

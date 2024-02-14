@@ -11,58 +11,42 @@ datasource db {
 }
 
 model Users {
-  id             Int          @id(map: "pk_users_id") @default(autoincrement())
-  name           String       @db.NVarChar(Max)
-  email          String       @unique
-  password       String       @db.NVarChar(Max)
-  image          String?      @db.NVarChar(Max)
-  mobile         String       @db.NVarChar(Max)
-  created_at     DateTime     @default(now())
-  updated_at     DateTime     @updatedAt
-  permissions    Permission[] @relation("UserToPermission")
-  admins         Admins[]      @relation("AdminToUser")
-  refreshTokens  RefreshToken[]
-  role           String?       @default("User") // Default role for regular users
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  image         String?
+  mobile        String
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  refreshTokens RefreshToken[]
+  role          String         @default("Employee") // Default role 
+  active        Boolean        @default(true)
 }
 
 model RefreshToken {
-  id          Int      @id @default(autoincrement())
-  token       String   @db.NVarChar(Max)
-  userId      Int      @map("users_id")
-  user        Users    @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Permission {
-  id          Int      @id(map: "pk_permissions_id") @default(autoincrement())
-  name        String   @db.NVarChar(Max)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  users  Users[] @relation("UserToPermission")
-  admins Admins[] @relation("AdminToPermission")
-}
-
-model Admins {
-  id             Int          @id(map: "pk_admins_id") @default(autoincrement())
-  name           String       @db.NVarChar(Max)
-  email          String       @unique
-  password       String       @db.NVarChar(Max)
-  mobile         String?      @db.NVarChar(Max)
-  created_at     DateTime     @default(now())
-  updated_at     DateTime     @updatedAt
-  users          Users[]      @relation("AdminToUser")
-  permissions    Permission[] @relation("AdminToPermission")
+  id        Int      @id @default(autoincrement())
+  token     String
+  user      Users    @relation(fields: [userId], references: [id])
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Routes {
-  id             Int          @id(map: "pk_routes_id") @default(autoincrement())
-  name           String       @db.NVarChar(Max)
-  waypoints      String       @db.NVarChar(Max)
-  distance       Float?      
-  distanceUnit   String?  
-  routeSchedule  DateTime
-  time           Int?         
-  createdAt      DateTime     @default(now()) @db.DateTime2
-  updatedAt      DateTime     @updatedAt @db.DateTime2
+  id         Int      @id @default(autoincrement())
+  name       String?
+  waypoints  String?
+  distance   Float
+  schedule   String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Territories {
+  id         Int      @id @default(autoincrement())
+  name       String?
+  distance   Float?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }

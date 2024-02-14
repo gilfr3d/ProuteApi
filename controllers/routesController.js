@@ -1,33 +1,24 @@
 import prisma from '../config/db.js';
-import { getDistanceMatrix } from '../utils/getDistanceMatrix.js';
-import { getCurrentLocation } from '../utils/getCurrentLocation.js';
 
 export const createRoutes = async (req, res) => {
-  const { name, waypoints, distanceUnit, routeSchedule, time } = req.body;
+  const { name, waypoints, schedule, distance } = req.body;
 
-  if (!name || !waypoints || !distanceUnit || !routeSchedule || !time) {
-    return res.status(400).json({ error: 'Fields Required' });
+  if (!name || !waypoints || !schedule || !distance) {
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
-    const currentLocation = await getCurrentLocation();
-    const origin = `${currentLocation.lat},${currentLocation.lng}`;
-    const destination = waypoints.split(',').map((point) => point.trim()).pop();
-  
-    const distanceMatrix = await getDistanceMatrix(origin, destination, apiKey);
-    const distance = distanceMatrix.rows[0].elements[0].distance.text;
-  
     const newRoute = await prisma.routes.create({
       data: {
         name,
-        waypoints: JSON.stringify(waypoints.split(',').map((point) => point.trim())),
-        distance,
-        distanceUnit,
-        routeSchedule: new Date(routeSchedule),
-        time,
+        waypoints: JSON.stringify(
+          waypoints.split(',').map((point) => point.trim())
+        ),
+        distance: parseFloat(distance),
+        schedule: schedule.toString(),
       },
     });
-  
+
     return res.json({
       status: 'success',
       data: {
@@ -61,50 +52,51 @@ export const getPlanRoutes = async (req, res) => {
 };
 
 export const updateRoute = async (req, res) => {
-    const { routeId } = req.params;
-    const { name, waypoints, distance, distanceUnit, routeSchedule, time } = req.body;
-  
-    try {
-      // Check if the route with the given ID exists
-      const existingRoute = await prisma.routes.findUnique({
-        where: { id: parseInt(routeId) },
-      });
-  
-      if (!existingRoute) {
-        return res.status(404).json({ error: 'Route not found' });
-      }
-  
-      // Update the existing route
-      const updatedRoute = await prisma.routes.update({
-        where: { id: parseInt(routeId) },
-        data: {
-          name: name || existingRoute.name,
-          waypoints: waypoints ? JSON.stringify(waypoints.split(',').map(point => point.trim())) : existingRoute.waypoints,
-          distance: distance || existingRoute.distance,
-          distanceUnit: distanceUnit || existingRoute.distanceUnit,
-          routeSchedule: routeSchedule ? new Date(routeSchedule) : existingRoute.routeSchedule,
-          time: time || existingRoute.time,
-        },
-      });
-  
-      return res.json({
-        status: 'success',
-        data: {
-          message: 'Route updated',
-          route: updatedRoute,
-        },
-      });
-    } catch (error) {
-      console.error('Error updating route:', error);
-      return res.status(500).json({
-        status: 'error',
-        error: 'Internal Server Error',
-      });
-    } finally {
-      await prisma.$disconnect();
+  const { routeId } = req.params;
+  const { name, waypoints, distance, schedule } = req.body;
+
+  try {
+    // Check if the route with the given ID exists
+    const existingRoute = await prisma.routes.findUnique({
+      where: { id: parseInt(routeId) },
+    });
+
+    if (!existingRoute) {
+      return res.status(404).json({ error: 'Route not found' });
     }
-  };
-  
+
+    // Update the existing route
+    const updatedRoute = await prisma.routes.update({
+      where: { id: parseInt(routeId) },
+      data: {
+        name: name !== undefined ? name : existingRoute.name,
+        waypoints: waypoints
+          ? JSON.stringify(waypoints.split(',').map((point) => point.trim()))
+          : existingRoute.waypoints,
+        distance: distance !== undefined ? parseFloat(distance) : existingRoute.distance,
+        schedule: schedule !== undefined ? schedule.toString() : existingRoute.schedule,
+      },
+    });
+
+    return res.json({
+      status: 'success',
+      data: {
+        message: 'Route updated',
+        route: updatedRoute,
+      },
+    });
+  } catch (error) {
+    console.error('Error updating route:', error);
+    return res.status(500).json({
+      status: 'error',
+      error: 'Internal Server Error',
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+
 export const deleteRoute = async (req, res) => {
   const { routeId } = req.params;
 
@@ -132,5 +124,3 @@ export const deleteRoute = async (req, res) => {
     await prisma.$disconnect();
   }
 };
-
-
