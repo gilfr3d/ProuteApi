@@ -2,9 +2,10 @@ import { Router } from "express";
 import { getUser, loginUser, logoutUser, refresh } from "../controllers/authController.js";
 import { registerUser } from "../controllers/registerController.js";
 import loginLimiter from '../middlewares/loginLimiter.js'
-import { getAllPermissions, getAllUsers, getUserById } from "../controllers/adminController.js";
+import { createProducts, getAllUsers, getUserById } from "../controllers/adminController.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { createRoutes, deleteRoute, getPlanRoutes, updateRoute } from "../controllers/routesController.js";
+import { createTerritories, getAllTerritories, getOneTerritory } from "../controllers/territoryController.js";
 
 const router = Router()
 // auth route
@@ -19,12 +20,18 @@ router.post('/logout', logoutUser);
 router.get('/users', getAllUsers);
 router.get('/users/:userId', getUserById);
 router.get('/user', getUser);
-router.get('/permissions', getAllPermissions);
 // plan route routes
 router.post('/create-route', createRoutes)
 router.get('/get-plan-route', getPlanRoutes)
 router.delete('/delete-route/:routeId', deleteRoute)
 router.put('/update-route/:routeId', updateRoute)
+// plan territory
+router.post('/create-territory', createTerritories )
+router.get('/get-all-territories', getAllTerritories)
+router.get('/get-territory/:territoryId', getOneTerritory)
+
+// products
+router.post('/create-products', createProducts)
 
 export default router;
 

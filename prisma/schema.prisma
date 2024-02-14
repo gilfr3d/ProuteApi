@@ -45,8 +45,24 @@ model Routes {
 
 model Territories {
   id         Int      @id @default(autoincrement())
-  name       String?
+  name       String?  @unique
+  address    String?
   distance   Float?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
+
+model Products {
+  id                 Int      @id @default(autoincrement())
+  product_name       String
+  price              Float
+  order_number       Int
+  customer_number    Int
+  gtin               BigInt   // Change data type to BigInt
+  gln                BigInt   // Change data type to BigInt
+  manufacturer       String
+  manufactured_date  DateTime
+  expiry_date        DateTime
+  country_of_origin  String
+}
+

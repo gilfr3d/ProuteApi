@@ -4,7 +4,6 @@ const getAllUsers = async (req, res) => {
     try {
       const allUsers = await prisma.users.findMany({
         include: {
-          permissions: true,
           admins: true,
         },
       });
@@ -26,10 +25,6 @@ const getAllUsers = async (req, res) => {
         where: {
           id: userId,
         },
-        // include: {
-        //   permissions: true,
-        //   admins: true,
-        // },
       });
   
       if (!user) {
@@ -45,20 +40,31 @@ const getAllUsers = async (req, res) => {
     }
   };
 
-const getAllPermissions = async (req, res) => {
+  //insert dummy data
+  export const createProducts = async (req, res) => {
+   
     try {
-      const allPermissions = await prisma.permission.findMany();
+      // Insert dummy product data into the database
+      const createdProducts = await prisma.products.createMany({
+        data: dummyProducts,
+      });
   
-      res.json(allPermissions);
+      return res.json({
+        success: true,
+        message: 'Dummy products inserted successfully.',
+        data: createdProducts,
+      });
     } catch (error) {
-      console.error('Error fetching all permissions:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    } finally {
-      await prisma.$disconnect();
+      console.error('Error inserting dummy products:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: error.message,
+      });
     }
   };
 
+
   export  {
     getAllUsers,
-    getAllPermissions
   }

@@ -14,9 +14,7 @@ export const loginUser = async (req, res) => {
       where: {
         email: email,
       },
-      include: {
-        permissions: true, // Include the associated roles
-      },
+
     });
 
     if (!foundUser) return res.sendStatus(401); // Unauthorized
