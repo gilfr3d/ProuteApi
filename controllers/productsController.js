@@ -2,7 +2,22 @@ import prisma from '../config/db.js';
 
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await prisma.products.findMany();
+        const products = await prisma.products.findMany({
+            // Convert BigInt fields to strings
+            select: {
+                id: true,
+                product_name: true,
+                price: true,
+                order_number: true,
+                customer_number: true,
+                gtin: product => product.gtin.toString(),
+                gln: product => product.gln.toString(),
+                manufacturer: true,
+                manufactured_date: true,
+                expiry_date: true,
+                country_of_origin: true,
+            },
+        });
 
         return res.status(200).json({
             status: 'success',
@@ -20,6 +35,7 @@ export const getAllProducts = async (req, res) => {
         await prisma.$disconnect();
     }
 };
+
 
   //insert dummy data
   export const createProducts = async (req, res) => {
