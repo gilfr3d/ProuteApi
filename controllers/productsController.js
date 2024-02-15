@@ -3,21 +3,27 @@ import prisma from '../config/db.js';
 export const getAllProducts = async (req, res) => {
     try {
         const products = await prisma.products.findMany({
-            // Convert BigInt fields to strings
-            select: {
-                id: true,
-                product_name: true,
-                price: true,
-                order_number: true,
-                customer_number: true,
-                gtin: product => product.gtin.toString(),
-                gln: product => product.gln.toString(),
-                manufacturer: true,
-                manufactured_date: true,
-                expiry_date: true,
-                country_of_origin: true,
-            },
-        });
+          select: {
+            id: true,
+            product_name: true,
+            price: true,
+            order_number: true,
+            customer_number: true,
+            gtin: true,
+            gln: true,
+            manufacturer: true,
+            manufactured_date: true,
+            expiry_date: true,
+            country_of_origin: true,
+        },
+    });
+
+    // Convert BigInt fields to strings
+    const productsWithStrings = products.map(product => ({
+        ...product,
+        gtin: product.gtin.toString(),
+        gln: product.gln.toString(),
+    }));
 
         return res.status(200).json({
             status: 'success',
