@@ -1,8 +1,9 @@
 import prisma from '../config/db.js';
 
 export const getAllProducts = async (req, res) => {
-    try {
-        const products = await prisma.products.findMany({
+  try {
+      const products = await prisma.products.findMany({
+        // Explicitly include BigInt fields
           select: {
             id: true,
             product_name: true,
@@ -40,7 +41,6 @@ export const getAllProducts = async (req, res) => {
       await prisma.$disconnect();
   }
 };
-
 
 
   //insert dummy data
