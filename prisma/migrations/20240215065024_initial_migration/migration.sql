@@ -44,12 +44,29 @@ CREATE TABLE [dbo].[Routes] (
 -- CreateTable
 CREATE TABLE [dbo].[Territories] (
     [id] INT NOT NULL IDENTITY(1,1),
+    [name] NVARCHAR(1000),
     [address] NVARCHAR(1000),
     [distance] FLOAT(53),
     [created_at] DATETIME2 NOT NULL CONSTRAINT [Territories_created_at_df] DEFAULT CURRENT_TIMESTAMP,
     [updated_at] DATETIME2 NOT NULL,
     CONSTRAINT [Territories_pkey] PRIMARY KEY CLUSTERED ([id]),
-    CONSTRAINT [Territories_address_key] UNIQUE NONCLUSTERED ([address])
+    CONSTRAINT [Territories_name_key] UNIQUE NONCLUSTERED ([name])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[Products] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [product_name] NVARCHAR(1000) NOT NULL,
+    [price] FLOAT(53) NOT NULL,
+    [order_number] INT NOT NULL,
+    [customer_number] INT NOT NULL,
+    [gtin] BIGINT NOT NULL,
+    [gln] BIGINT NOT NULL,
+    [manufacturer] NVARCHAR(1000) NOT NULL,
+    [manufactured_date] DATETIME2 NOT NULL,
+    [expiry_date] DATETIME2 NOT NULL,
+    [country_of_origin] NVARCHAR(1000) NOT NULL,
+    CONSTRAINT [Products_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
 -- AddForeignKey
