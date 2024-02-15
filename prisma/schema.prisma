@@ -58,8 +58,8 @@ model Products {
   price              Float
   order_number       Int
   customer_number    Int
-  gtin               String
-  gln                String  
+  gtin               BigInt
+  gln                BigInt  
   manufacturer       String
   manufactured_date  DateTime
   expiry_date        DateTime
