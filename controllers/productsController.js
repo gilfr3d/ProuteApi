@@ -16,31 +16,31 @@ export const getAllProducts = async (req, res) => {
             expiry_date: true,
             country_of_origin: true,
         },
-    });
-
-    // Convert BigInt fields to strings
-    const productsWithStrings = products.map(product => ({
-        ...product,
-        gtin: product.gtin.toString(),
-        gln: product.gln.toString(),
-    }));
-
-        return res.status(200).json({
-            status: 'success',
-            data: {
-                products,
-            },
         });
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        return res.status(500).json({
-            status: 'error',
-            error: 'Internal Server Error',
-        });
-    } finally {
-        await prisma.$disconnect();
-    }
+        // Convert BigInt fields to strings
+        const productsWithStrings = products.map(product => ({
+          ...product,
+          gtin: product.gtin.toString(),
+          gln: product.gln.toString(),
+      }));
+
+      return res.status(200).json({
+          status: 'success',
+          data: {
+              products: productsWithStrings,
+          },
+      });
+  } catch (error) {
+      console.error('Error fetching products:', error);
+      return res.status(500).json({
+          status: 'error',
+          error: 'Internal Server Error',
+      });
+  } finally {
+      await prisma.$disconnect();
+  }
 };
+
 
 
   //insert dummy data
