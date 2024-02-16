@@ -7,6 +7,7 @@ import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { createRoutes, deleteRoute, getPlanRoutes, updateRoute } from "../controllers/routesController.js";
 import { createTerritories, getAllTerritories, getOneTerritory } from "../controllers/territoryController.js";
 import { createOrders, createProducts, getAllOrders, getAllProducts, getOrder } from "../controllers/productsController.js";
+import { createCustomers } from "../controllers/customerController.js";
 
 const router = Router()
 // auth route
@@ -37,6 +38,9 @@ router.get('/get-all-products', getAllProducts)
 router.post('/create-orders', createOrders)
 router.get('/get-all-orders', getAllOrders)
 router.get('/get-order/:order_number', getOrder);
+
+// customers/orders
+router.post('/create-customer', createCustomers)
 
 export default router;
 
