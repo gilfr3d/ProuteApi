@@ -6,7 +6,7 @@ import { getAllUsers, getUserById } from "../controllers/adminController.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { createRoutes, deleteRoute, getPlanRoutes, updateRoute } from "../controllers/routesController.js";
 import { createTerritories, getAllTerritories, getOneTerritory } from "../controllers/territoryController.js";
-import { createOrders, createProducts, getAllProducts } from "../controllers/productsController.js";
+import { createOrders, createProducts, getAllOrders, getAllProducts, getOrder } from "../controllers/productsController.js";
 
 const router = Router()
 // auth route
@@ -35,7 +35,8 @@ router.get('/get-territory/:territoryId', getOneTerritory)
 router.post('/create-products', createProducts)
 router.get('/get-all-products', getAllProducts)
 router.post('/create-orders', createOrders)
-router.get('/get-all-orders')
+router.get('/get-all-orders', getAllOrders)
+router.get('/get-order/:order_number', getOrder);
 
 export default router;
 
