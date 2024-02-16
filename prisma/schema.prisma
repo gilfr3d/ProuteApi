@@ -67,15 +67,19 @@ model Products {
 }
 
 model Orders {
-  id             Int      @id @default(autoincrement())
-  order_number   BigInt
-  product_name   String
-  gtin           String
-  gln            String
-  customer_name  String
-  customer_email String   @unique
-  city           String
-  order_date     DateTime
-  order_total    Float
-  payment_method String
+  id               Int      @id @default(autoincrement())
+  order_number     BigInt
+  product_name     String
+  gtin             String
+  gln              String
+  customer_name    String
+  customer_email   String   @unique
+  shipping_address String
+  state            String?
+  city             String
+  postal_code      String?
+  order_date       DateTime
+  order_total      Float
+  mobile_number    String
+  payment_method   String
 }
