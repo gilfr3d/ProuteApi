@@ -53,16 +53,29 @@ model Territories {
 }
 
 model Products {
-  id                 Int      @id @default(autoincrement())
-  product_name       String
-  price              Float
-  order_number       Int
-  customer_number    Int
-  gtin               BigInt
-  gln                BigInt  
-  manufacturer       String
-  manufactured_date  DateTime
-  expiry_date        DateTime
-  country_of_origin  String
+  id                Int      @id @default(autoincrement())
+  product_name      String
+  price             Float
+  order_number      Int
+  customer_number   Int
+  gtin              BigInt
+  gln               BigInt
+  manufacturer      String
+  manufactured_date DateTime
+  expiry_date       DateTime
+  country_of_origin String
 }
 
+model Orders {
+  id             Int      @id @default(autoincrement())
+  order_number   BigInt
+  product_name   String
+  gtin           String
+  gln            String
+  customer_name  String
+  customer_email String   @unique
+  city           String
+  order_date     DateTime
+  order_total    Float
+  payment_method String
+}
