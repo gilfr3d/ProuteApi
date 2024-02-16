@@ -74,9 +74,9 @@ model Orders {
   gln              String
   customer_name    String
   customer_email   String   @unique
-  shipping_address String
+  shipping_address String?
   state            String?
-  city             String
+  city             String?
   postal_code      String?
   order_date       DateTime
   order_total      Float
