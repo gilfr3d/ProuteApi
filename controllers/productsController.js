@@ -1,4 +1,6 @@
 import prisma from '../config/db.js';
+import { generateShippingLabel } from '../utils/generateShippingLabel.js';
+import {initiateShipment} from '../utils/initiateShipment.js';
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -76,9 +78,7 @@ export const getAllProducts = async (req, res) => {
         "order_total": 1677.64,
         "payment_method": "cash"
       },
-    ]
-    
-      
+    ]    
     try {
       // Insert dummy product data into the database
       const createdProducts = await prisma.products.createMany({
@@ -3323,49 +3323,10 @@ export const getAllProducts = async (req, res) => {
       });
     }
   };
-  
-  export const getOrder = async (req, res) => {
-    const { order_number } = req.params;
-  
-    try {
-      const order = await prisma.orders.findFirst({
-        where: {
-          order_number: parseInt(order_number),
-        },
-      });
-  
-      if (!order) {
-        return res.status(404).json({
-          success: false,
-          message: 'Order not found.',
-        });
-      }
-  
-      // Convert BigInt field to string
-      const orderStringified = {
-        ...order,
-        order_number: order.order_number.toString(),
-      };
-      return res.status(200).json({
-        success: true,
-        message: 'Order retrieved successfully.',
-        data: orderStringified,
-      });
-    } catch (error) {
-      console.error('Error fetching order:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Internal Server Error',
-        error: error.message,
-      });
-    }
-  };
-  
+
   export const getAllOrders = async (req, res) => {
     try {
       const orders = await prisma.orders.findMany();
-  
-      // Convert BigInt fields to strings
       const ordersStringified = orders.map((order) => ({
         ...order,
         order_number: order.order_number.toString(),
@@ -3385,3 +3346,93 @@ export const getAllProducts = async (req, res) => {
       });
     }
   };
+  
+  export const getOrder = async (req, res) => {
+    const { order_number } = req.params;
+  
+    try {
+        const order = await prisma.orders.findFirst({
+            where: {
+                order_number: parseInt(order_number),
+            },
+        });
+  
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found.',
+            });
+        }
+
+        const orderStringified = {
+            ...order,
+            order_number: String(order.order_number),
+            status: order.status || ""
+        };
+
+        return res.status(200).json({
+            success: true,
+            message: 'Order retrieved successfully.',
+            data: orderStringified,
+        });
+    } catch (error) {
+        console.error('Error fetching order:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: error.message,
+        });
+    }
+};
+
+  export const pickAndSend = async (req,res) => {
+    const {order_number} = req.params;
+
+    try {
+      const order = await prisma.orders.findFirst({
+        where: {
+          order_number: parseInt(order_number)
+        }
+      })
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found.',
+        });
+      }
+
+      await prisma.orders.update({
+        where: {
+          customer_email: order.customer_email,
+        },
+        data: {
+          status: 'Picked and Sent',
+        },
+      });
+
+      // Generate a shipping label for the order => this can be done in frontend side
+    const shippingLabel = await generateShippingLabel(order);
+
+    // Initiate the shipment using the shipping service
+    const shipmentStatus = await initiateShipment(order, shippingLabel); //this can be done in frontend side
+
+    // Return a success response with the updated order details
+    return res.status(200).json({
+      success: true,
+      message: 'Order picked and sent successfully.',
+      data: {
+        order,
+        shipmentStatus,
+      },
+    });
+  } catch (error) {
+    console.error('Error picking and sending order:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
+  }
+    
+}
+ 

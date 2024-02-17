@@ -6,7 +6,7 @@ import { getAllUsers, getUserById } from "../controllers/adminController.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { createRoutes, deleteRoute, getPlanRoutes, updateRoute } from "../controllers/routesController.js";
 import { createTerritories, getAllTerritories, getOneTerritory } from "../controllers/territoryController.js";
-import { createOrders, createProducts, getAllOrders, getAllProducts, getOrder } from "../controllers/productsController.js";
+import { createOrders, createProducts, getAllOrders, getAllProducts, getOrder, pickAndSend } from "../controllers/productsController.js";
 import { createCustomers } from "../controllers/customerController.js";
 
 const router = Router()
@@ -38,6 +38,7 @@ router.get('/get-all-products', getAllProducts)
 router.post('/create-orders', createOrders)
 router.get('/get-all-orders', getAllOrders)
 router.get('/get-order/:order_number', getOrder);
+router.post('/orders/:order_number/pick-and-send', pickAndSend);
 
 // customers/orders
 router.post('/create-customer', createCustomers)
