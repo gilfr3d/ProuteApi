@@ -3228,45 +3228,39 @@ import {initiateShipment} from '../utils/initiateShipment.js';
 
   export const updateOrder = async (req, res) => {
     const { order_number } = req.params;
-    const { shipping_address, payment_method, status } = req.body;
+    const { shipping_address, state, city, payment_method, status } = req.body;
   
     try {
-      // Parse order_number to integer
       const orderNumber = parseInt(order_number);
-      
-      // Check if orderNumber is a valid integer
       if (isNaN(orderNumber)) {
         return res.status(400).json({ error: 'Invalid order number' });
       }
-  
-      // Find the existing order
       const existingOrder = await prisma.orders.findFirst({
         where: { order_number: orderNumber },
       });
-  
-      // If order doesn't exist, return 404 error
+
       if (!existingOrder) {
         return res.status(404).json({ error: 'Order not found' });
       }
-  
-      // Update the order
+
       const updatedOrder = await prisma.orders.update({
         where: { order_number: orderNumber },
         data: {
           shipping_address,
+          state, 
+          city,
           payment_method,
           status,
         },
       });
   
-      // Return success response with the updated order details
       return res.status(200).json({
         success: true,
         message: 'Order updated successfully.',
         data: updatedOrder,
       });
     } catch (error) {
-      // Return error response if any error occurs
+
       console.error('Error updating order:', error);
       return res.status(500).json({
         success: false,

@@ -98,8 +98,6 @@ export const updateRoute = async (req, res) => {
   }
 };
 
-
-
 export const deleteRoute = async (req, res) => {
   const { routeId } = req.params;
 
