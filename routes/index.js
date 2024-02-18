@@ -6,8 +6,9 @@ import { getAllUsers, getUserById } from "../controllers/adminController.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { createRoutes, deleteRoute, getPlanRoutes, updateRoute } from "../controllers/routesController.js";
 import { createTerritories, getAllTerritories, getOneTerritory } from "../controllers/territoryController.js";
-import { createOrders, createProducts, getAllOrders, getAllProducts, getOrder, pickAndSend } from "../controllers/productsController.js";
+import { createOrders, getAllOrders, getOrder, pickAndSend, updateOrder } from "../controllers/salesOrderController.js";
 import { createCustomers } from "../controllers/customerController.js";
+import { createVehicle, deleteVehicle, getAllVehicles, updateVehicle } from "../controllers/vehicleController.js";
 
 const router = Router()
 // auth route
@@ -33,15 +34,20 @@ router.get('/get-all-territories', getAllTerritories)
 router.get('/get-territory/:territoryId', getOneTerritory)
 
 // products/orders
-router.post('/create-products', createProducts)
-router.get('/get-all-products', getAllProducts)
 router.post('/create-orders', createOrders)
 router.get('/get-all-orders', getAllOrders)
 router.get('/get-order/:order_number', getOrder);
+router.put('/update-order/:order_number', updateOrder);
 router.post('/orders/:order_number/pick-and-send', pickAndSend);
 
 // customers/orders
 router.post('/create-customer', createCustomers)
+
+// vehicle
+router.post('/create-vehicle', createVehicle)
+router.get('/get-all-vehicles', getAllVehicles)
+router.put('/update-vehicle/:license_plate', updateVehicle);
+router.delete('/delete-vehicle/:id', deleteVehicle);
 
 export default router;
 

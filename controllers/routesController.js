@@ -3,7 +3,7 @@ import prisma from '../config/db.js';
 export const createRoutes = async (req, res) => {
   const { name, waypoints, schedule, distance } = req.body;
 
-  if (!name || !waypoints || !schedule || !distance) {
+  if (!name || !waypoints || !schedule ) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 

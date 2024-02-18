@@ -37,8 +37,8 @@ model Routes {
   id         Int      @id @default(autoincrement())
   name       String?
   waypoints  String?
-  distance   Float
-  schedule   String?
+  distance   Float?
+  schedule   DateTime
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
@@ -47,28 +47,13 @@ model Territories {
   id         Int      @id @default(autoincrement())
   name       String?  @unique
   address    String?
-  distance   Float?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
 
-model Products {
-  id                 Int      @id @default(autoincrement())
-  product_name       String
-  price              Float
-  order_number       Int
-  customer_number    Int
-  gtin               BigInt
-  gln                BigInt  
-  manufacturer       String
-  manufactured_date  DateTime
-  expiry_date        DateTime
-  country_of_origin  String
-}
-
 model Orders {
   id               Int      @id @default(autoincrement())
-  order_number     Int
+  order_number     Int      @unique
   product_name     String
   gtin             String
   gln              String
@@ -83,4 +68,18 @@ model Orders {
   mobile_number    String
   payment_method   String
   status           String?
+}
+
+model Vehicles {
+  id                      Int       @id @default(autoincrement())
+  vehicle_name            String?
+  license_plate           String    @unique
+  delivery_date           DateTime?
+  cargo_type              String?
+  destination_address     String?
+  delivery_status         String?
+  estimated_delivery_time String?
+  maintenance_required    Boolean
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
 }

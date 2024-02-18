@@ -2,104 +2,6 @@ import prisma from '../config/db.js';
 import { generateShippingLabel } from '../utils/generateShippingLabel.js';
 import {initiateShipment} from '../utils/initiateShipment.js';
 
-export const getAllProducts = async (req, res) => {
-  try {
-      const products = await prisma.products.findMany({
-        // Explicitly include BigInt fields
-          select: {
-            id: true,
-            product_name: true,
-            price: true,
-            order_number: true,
-            customer_number: true,
-            gtin: true,
-            gln: true,
-            manufacturer: true,
-            manufactured_date: true,
-            expiry_date: true,
-            country_of_origin: true,
-        },
-        });
-        // Convert BigInt fields to strings
-        const productsWithStrings = products.map(product => ({
-          ...product,
-          gtin: product.gtin.toString(),
-          gln: product.gln.toString(),
-      }));
-
-      return res.status(200).json({
-          status: 'success',
-          data: {
-              products: productsWithStrings,
-          },
-      });
-  } catch (error) {
-      console.error('Error fetching products:', error);
-      return res.status(500).json({
-          status: 'error',
-          error: 'Internal Server Error',
-      });
-  } finally {
-      await prisma.$disconnect();
-  }
-};
-
-
-  //insert dummy data
-  export const createProducts = async (req, res) => {
-    const dummyProducts = [
-      {
-        "order_number": 1,
-        "product_name": "Pasta - Lasagne, Fresh",
-        "gtin": "3456789012345",
-        "gln": "000000000011",
-        "customer_name": "Adolph Calvard",
-        "customer_email": "acalvard0@wsj.com",
-        "shipping_address": "727 School Drive",
-        "city": "Pangantocan",
-        "state": null,
-        "postal_code": "4006",
-        "order_date": "2023-09-07T04:52:08Z",
-        "order_total": 6173.17,
-        "payment_method": "PayPal"
-      },
-      {
-        "order_number": 2,
-        "product_name": "Soup - Knorr, French Onion",
-        "gtin": "1234567890123",
-        "gln": "000000000001",
-        "customer_name": "Wenona Popworth",
-        "customer_email": "wpopworth1@parallels.com",
-        "shipping_address": "4 Dayton Parkway",
-        "city": "Rychwał",
-        "state": null,
-        "postal_code": "62-570",
-        "order_date": "2022-12-29T15:59:32Z",
-        "order_total": 1677.64,
-        "payment_method": "cash"
-      },
-    ]    
-    try {
-      // Insert dummy product data into the database
-      const createdProducts = await prisma.products.createMany({
-        data: dummyProducts,
-      });
-  
-      return res.json({
-        success: true,
-        message: 'Dummy products inserted successfully.',
-        data: createdProducts,
-      });
-    } catch (error) {
-      console.error('Error inserting dummy products:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Internal Server Error',
-        error: error.message,
-      });
-    }
-  };
-
   export const createOrders = async (req, res) => {
     const dummyOrders = [
       {
@@ -3324,6 +3226,57 @@ export const getAllProducts = async (req, res) => {
     }
   };
 
+  export const updateOrder = async (req, res) => {
+    const { order_number } = req.params;
+    const { shipping_address, payment_method, status } = req.body;
+  
+    try {
+      // Parse order_number to integer
+      const orderNumber = parseInt(order_number);
+      
+      // Check if orderNumber is a valid integer
+      if (isNaN(orderNumber)) {
+        return res.status(400).json({ error: 'Invalid order number' });
+      }
+  
+      // Find the existing order
+      const existingOrder = await prisma.orders.findFirst({
+        where: { order_number: orderNumber },
+      });
+  
+      // If order doesn't exist, return 404 error
+      if (!existingOrder) {
+        return res.status(404).json({ error: 'Order not found' });
+      }
+  
+      // Update the order
+      const updatedOrder = await prisma.orders.update({
+        where: { order_number: orderNumber },
+        data: {
+          shipping_address,
+          payment_method,
+          status,
+        },
+      });
+  
+      // Return success response with the updated order details
+      return res.status(200).json({
+        success: true,
+        message: 'Order updated successfully.',
+        data: updatedOrder,
+      });
+    } catch (error) {
+      // Return error response if any error occurs
+      console.error('Error updating order:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: error.message,
+      });
+    }
+  };
+  
+  
   export const getAllOrders = async (req, res) => {
     try {
       const orders = await prisma.orders.findMany();

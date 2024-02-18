@@ -1,9 +1,9 @@
 import prisma from '../config/db.js';
 
 export const createTerritories = async (req, res) => {
-    const { name, address, distance } = req.body;
+    const { name, address } = req.body;
   
-    if (!name || !distance) {
+    if (!name || !address) {
         return res.status(400).json({ error: 'All fields are required' });
     }
   
@@ -21,13 +21,10 @@ export const createTerritories = async (req, res) => {
                 message: 'Territory already exists',
             });
         }
-      
-        // Create the new territory
         const newTerritory = await prisma.territories.create({
             data: {
                 name,
                 address,
-                distance: parseFloat(distance),
             },
         });
 
