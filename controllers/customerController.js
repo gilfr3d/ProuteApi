@@ -705,7 +705,6 @@ export const createCustomers = async (req, res) => {
       ]
       
     try {
-      // Insert dummy orders data into the database
       const createdCustomers = await prisma.customers.createMany({
         data: dummyCustomers,
       });

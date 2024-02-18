@@ -56,7 +56,6 @@ export const updateRoute = async (req, res) => {
   const { name, waypoints, distance, schedule } = req.body;
 
   try {
-    // Check if the route with the given ID exists
     const existingRoute = await prisma.routes.findUnique({
       where: { id: parseInt(routeId) },
     });
@@ -65,14 +64,17 @@ export const updateRoute = async (req, res) => {
       return res.status(404).json({ error: 'Route not found' });
     }
 
-    // Update the existing route
+    let updatedWaypoints;
+    if (typeof waypoints === 'string') {
+      updatedWaypoints = JSON.stringify(waypoints.split(',').map((point) => point.trim()));
+    } else {
+      updatedWaypoints = existingRoute.waypoints;
+    }
     const updatedRoute = await prisma.routes.update({
       where: { id: parseInt(routeId) },
       data: {
         name: name !== undefined ? name : existingRoute.name,
-        waypoints: waypoints
-          ? JSON.stringify(waypoints.split(',').map((point) => point.trim()))
-          : existingRoute.waypoints,
+        waypoints: updatedWaypoints,
         distance: distance !== undefined ? parseFloat(distance) : existingRoute.distance,
         schedule: schedule !== undefined ? schedule.toString() : existingRoute.schedule,
       },
@@ -95,6 +97,7 @@ export const updateRoute = async (req, res) => {
     await prisma.$disconnect();
   }
 };
+
 
 
 export const deleteRoute = async (req, res) => {
