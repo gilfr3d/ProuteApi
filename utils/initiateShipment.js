@@ -1,20 +1,50 @@
-export const initiateShipment = async (order, shippingLabel, customStatus, customCarrier, customTrackingNumber, customEstimatedDeliveryDate) => {
-    // Simulate initiating the shipment using the shipping service
-    // In a real-world scenario, this function would interact with a shipping service API
-  
-    // Generate a mock shipment status
-    const shipmentStatus = {
-      status: customStatus || 'Shipped', // Default value 'Shipped' if customStatus is not provided
-      carrier: customCarrier || 'PRoute', // Default value 'PRoute' if customCarrier is not provided
-      trackingNumber: customTrackingNumber || '1234567890', // Default value '1234567890' if customTrackingNumber is not provided
-      estimatedDeliveryDate: customEstimatedDeliveryDate || '2024-04-20', // Default value '2024-04-20' if customEstimatedDeliveryDate is not provided
-      // Other shipment status details
-    };
-  
-    return shipmentStatus;
+
+// Function to generate a random tracking number
+const generateTrackingNumber = () => {
+  const randomPart = Math.floor(Math.random() * 1000000000); // Generate a random 9-digit number
+  const trackingNumber = `TN${randomPart}`; 
+  return trackingNumber;
 };
 
-// Example usage:
-//const shipmentStatus = await initiateShipment(order, shippingLabel, 'In Transit', 'DHL', '9876543210', '2024-04-25');
+// Function to calculate estimated delivery date (e.g., 7 days from the current date)
+const calculateEstimatedDeliveryDate = () => {
+  const currentDate = new Date();
+  const estimatedDeliveryDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000); // Add 7 days to the current date
+  return estimatedDeliveryDate.toISOString(); // Convert the date to ISO string format
+};
 
-  
+
+export const initiateShipment = async (
+  order,
+  shippingLabel,
+  customStatus,
+  customCarrier,
+  customTrackingNumber,
+  customEstimatedDeliveryDate
+) => {
+
+  let status;
+
+  switch (customStatus) {
+    case 'Pending':
+      status = 'Pending';
+      break;
+    case 'Delivered':
+      status = 'Delivered';
+      break;
+    default:
+      status = 'Shipped';
+
+  const shipmentStatus = {
+    status: customStatus || 'Shipped', // Default to 'Shipped' if customStatus is not provided
+    carrier: customCarrier || 'PRoute', // Default to 'PRoute' if customCarrier is not provided
+    trackingNumber: customTrackingNumber || generateTrackingNumber(), // Generate a tracking number if not provided
+    estimatedDeliveryDate: customEstimatedDeliveryDate || calculateEstimatedDeliveryDate(), // Calculate estimated delivery date if not provided
+    // Other shipment status details
+  };
+
+  return shipmentStatus;
+};
+;
+
+
