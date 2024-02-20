@@ -44,7 +44,6 @@ export const initiateShipment = async (
   };
 
   return shipmentStatus;
-};
-;
+}
 
-
+}
