@@ -3382,4 +3382,36 @@ import {initiateShipment} from '../utils/initiateShipment.js';
   }
     
 }
+
+export const deleteOrder = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const orderId = parseInt(id);
+    if (isNaN(orderId)) {
+      return res.status(400).json({ error: 'Invalid Order' });
+    }
+
+    const existingOrder = await prisma.orders.findUnique({
+      where: { id: orderId },
+    });
+    if (!existingOrder) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    await prisma.orders.delete({
+      where: { id: orderId },
+    });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Order deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    return res.status(500).json({
+      status: 'error',
+      error: 'Internal Server Error',
+    });
+  }
+};
  

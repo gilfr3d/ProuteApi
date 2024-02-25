@@ -263,6 +263,7 @@ export const getAllVehicles = async (req, res) => {
     });
   }
 };
+
 export const updateVehicle = async (req, res) => {
   const { license_plate } = req.params;
   const {
